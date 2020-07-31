@@ -1,6 +1,55 @@
-<!DOCTYPE html>
 <html>
-	<body>
-		<h1>index</h1>
-	</body>
+<head>
+  <title>test Ws mqtt.js</title>
+</head>
+<body>
+  <!-- <h2 id="clientIdHeader"></h2>
+    <hr/> -->
+    <h3>Send data</h3>
+    <div>
+      <input type="text" id="text" value="Hello World"></input>
+      <button id="send">SEND</button>
+    </div>
+    <hr/>
+    <h3>Received data from topic "irtest" </h3>
+    <div id="received">
+      <ul id="list">
+      </ul>
+    </div>
+    <hr>
+    <script src="./node_modules/mqtt/browserMqtt.js"></script>
+    <script>
+    let mqtturl = 'mqtts://0413fa44:1f7cf32d53a6b321@broker.shiftr.io';
+    let options = {
+      clientId: 'moeka',
+      // 'Browser-'+Math.floor(Math.random() * 100) // ID Example: "Browser-23"
+    }
+    let topic = 'topic_wonders';
+    // $("#clientIdHeader").text('Client ID: '+options.clientId);
+    console.log('clientId: ' + options.clientId);
+    console.log('connecting to: ' + mqtturl);
+    let client = mqtt.connect(mqtturl, options);
+    client.on('connect', function(){
+      console.log('connected.');
+      client.subscribe(topic, function(err, granted) {
+        if (err) {
+          console.log('subscribe failed:', err);
+        } else {
+          console.log('subscribe succeeded');
+        }
+      });
+    });
+    // message受信時の動作:
+    client.on('message', function(topic, message){
+        console.log('subscriber.on.message', 'topic:', topic, 'message:', message);
+        const messageList = document.createElement('li')
+        messageList.textContent = message;
+        document.getElementById('list').appendChild(messageList)
+    });
+    // ボタンクリック時の動作:
+    document.getElementById('send').addEventListener("click", function(){
+      client.publish(topic, document.getElementById('text').value);
+    });
+  </script>
+</body>
 </html>
